@@ -20,7 +20,7 @@ func eqSlices[T comparable](a []T, b []T) bool {
 }
 
 func TestToString(t *testing.T) {
-	obj := NewRoundRobinQueue[int](10)
+	obj := NewRingQueue[int](10)
 	expected := "[RRQ full:false size:10 start:0 end:0 data:[0 0 0 0 0 0 0 0 0 0]]"
 	actual := fmt.Sprint(obj)
 
@@ -30,7 +30,7 @@ func TestToString(t *testing.T) {
 }
 
 func TestPushEnough(t *testing.T) {
-	obj := NewRoundRobinQueue[int](10)
+	obj := NewRingQueue[int](10)
 	for idx := 0; idx < 10; idx++ {
 		err := obj.Push(idx)
 		if err != nil {
@@ -46,7 +46,7 @@ func TestPushEnough(t *testing.T) {
 }
 
 func TestPushOver(t *testing.T) {
-	obj := NewRoundRobinQueue[int](10)
+	obj := NewRingQueue[int](10)
 	for idx := 0; idx < 10; idx++ {
 		err := obj.Push(idx)
 		if err != nil {
@@ -67,7 +67,7 @@ func TestPushOver(t *testing.T) {
 }
 
 func TestPushPop(t *testing.T) {
-	obj := NewRoundRobinQueue[int](10)
+	obj := NewRingQueue[int](10)
 	for idx := 0; idx < 8; idx++ {
 		obj.Push(idx)
 	}
@@ -100,7 +100,7 @@ func TestPushPop(t *testing.T) {
 }
 
 func BenchmarkRR(b *testing.B) {
-	rr := NewRoundRobinQueue[int](100_000)
+	rr := NewRingQueue[int](100_000)
 
 	for n := 0; n < b.N; n++ {
 		if rr.IsFull() {

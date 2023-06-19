@@ -4,15 +4,15 @@ import (
 	"fmt"
 )
 
-type RoundRobinQueue[T any] struct {
+type RingQueue[T any] struct {
 	data   []T
 	isFull bool
 	start  int
 	end    int
 }
 
-func NewRoundRobinQueue[T any](capacity int) *RoundRobinQueue[T] {
-	return &RoundRobinQueue[T]{
+func NewRingQueue[T any](capacity int) *RingQueue[T] {
+	return &RingQueue[T]{
 		data:   make([]T, capacity),
 		isFull: false,
 		start:  0,
@@ -20,7 +20,7 @@ func NewRoundRobinQueue[T any](capacity int) *RoundRobinQueue[T] {
 	}
 }
 
-func (r *RoundRobinQueue[T]) String() string {
+func (r *RingQueue[T]) String() string {
 	return fmt.Sprintf(
 		"[RRQ full:%v size:%d start:%d end:%d data:%v]",
 		r.isFull,
@@ -30,7 +30,7 @@ func (r *RoundRobinQueue[T]) String() string {
 		r.data)
 }
 
-func (r *RoundRobinQueue[T]) Push(elem T) error {
+func (r *RingQueue[T]) Push(elem T) error {
 	if r.isFull {
 		return fmt.Errorf("out of bounds push, container is full")
 	}
@@ -42,7 +42,7 @@ func (r *RoundRobinQueue[T]) Push(elem T) error {
 	return nil
 }
 
-func (r *RoundRobinQueue[T]) Pop() (T, error) {
+func (r *RingQueue[T]) Pop() (T, error) {
 	var res T
 	if !r.isFull && r.start == r.end {
 		return res, fmt.Errorf("empty queue")
@@ -55,7 +55,7 @@ func (r *RoundRobinQueue[T]) Pop() (T, error) {
 	return res, nil
 }
 
-func (r *RoundRobinQueue[T]) Size() int {
+func (r *RingQueue[T]) Size() int {
 	res := r.end - r.start
 	if res < 0 || (res == 0 && r.isFull) {
 		res = len(r.data) - res
@@ -64,6 +64,6 @@ func (r *RoundRobinQueue[T]) Size() int {
 	return res
 }
 
-func (r *RoundRobinQueue[T]) IsFull() bool {
+func (r *RingQueue[T]) IsFull() bool {
 	return r.isFull
 }
