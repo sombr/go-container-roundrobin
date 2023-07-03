@@ -3,6 +3,7 @@ package roundrobin
 import (
 	"fmt"
 	"testing"
+	"time"
 )
 
 func eqSlices[T comparable](a []T, b []T) bool {
@@ -99,8 +100,56 @@ func TestPushPop(t *testing.T) {
 	}
 }
 
+func sim(capacity int) {
+	ar := make([]int, capacity, capacity)
+	size := 0
+
+	start := time.Now()
+	for n := 0; n < 1000000; n++ {
+		if size >= len(ar) {
+			copy(ar[0:], ar[1:])
+			size--
+		}
+
+		ar[size] = n
+		size++
+	}
+
+	fmt.Printf("%d took %v\n", capacity, time.Since(start).Seconds())
+}
+
+func simRR(capacity int) {
+	rr := NewRingQueue[int](capacity)
+
+	start := time.Now()
+	for n := 0; n < 1000000; n++ {
+		if rr.IsFull() {
+			rr.Pop()
+		}
+		rr.Push(n)
+	}
+
+	fmt.Printf("%d took %v\n", capacity, time.Since(start).Seconds())
+}
+
+func TestSizes(t *testing.T) {
+	fmt.Println("array")
+	cap := 1
+	for idx := 1; idx < 7; idx++ {
+		sim(cap)
+		cap = cap * 10
+	}
+
+	fmt.Println("rr")
+	cap = 1
+	for idx := 1; idx < 7; idx++ {
+		simRR(cap)
+		cap = cap * 10
+	}
+}
+
 func BenchmarkRR(b *testing.B) {
-	rr := NewRingQueue[int](100_000)
+	rr := NewRingQueue[int](1_000)
 
 	for n := 0; n < b.N; n++ {
 		if rr.IsFull() {
@@ -111,12 +160,16 @@ func BenchmarkRR(b *testing.B) {
 }
 
 func BenchmarkArray(b *testing.B) {
-	ar := make([]int, 0, 100_000)
+	var ar [1_000]int
+	size := 0
 
 	for n := 0; n < b.N; n++ {
-		if len(ar) >= 100_000 {
-			ar = ar[1:]
+		if size >= len(ar) {
+			copy(ar[0:], ar[1:])
+			size--
 		}
-		ar = append(ar, n)
+
+		ar[size] = n
+		size++
 	}
 }

@@ -5,10 +5,10 @@ import (
 )
 
 type RingQueue[T any] struct {
-	data   []T
-	isFull bool
-	start  int
-	end    int
+	data   []T  // container data of a generic type T
+	isFull bool // disambiguate whether the queue is full or empty
+	start  int  // start index (inclusive, i.e. first element)
+	end    int  // end index (exclusive, i.e. next after last element)
 }
 
 func NewRingQueue[T any](capacity int) *RingQueue[T] {
@@ -35,24 +35,33 @@ func (r *RingQueue[T]) Push(elem T) error {
 		return fmt.Errorf("out of bounds push, container is full")
 	}
 
-	r.data[r.end] = elem
-	r.end = (r.end + 1) % len(r.data)
-	r.isFull = r.end == r.start
+	r.data[r.end] = elem              // place the new element on the available space
+	r.end = (r.end + 1) % len(r.data) // move the end forward by modulo of capacity
+	r.isFull = r.end == r.start       // check if we're full now
 
 	return nil
 }
 
 func (r *RingQueue[T]) Pop() (T, error) {
-	var res T
+	var res T // "zero" element (respective of the type)
 	if !r.isFull && r.start == r.end {
 		return res, fmt.Errorf("empty queue")
 	}
 
-	res = r.data[r.start]
-	r.start = (r.start + 1) % len(r.data)
-	r.isFull = false
+	res = r.data[r.start]                 // copy over the first element in the queue
+	r.start = (r.start + 1) % len(r.data) // move the start of the queue
+	r.isFull = false                      // since we're removing elements, we can never be full
 
 	return res, nil
+}
+
+func (r *RingQueue[T]) Peek() (T, error) {
+	var res T // "zero" element (respective of the type)
+	if !r.isFull && r.start == r.end {
+		return res, fmt.Errorf("empty queue")
+	}
+
+	return r.data[r.start], nil
 }
 
 func (r *RingQueue[T]) Size() int {
