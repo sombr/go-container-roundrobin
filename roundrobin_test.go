@@ -44,6 +44,10 @@ func TestPushEnough(t *testing.T) {
 	if !eqSlices(obj.data, expected) {
 		t.Fatalf("Container data mismatch, expected:%v, found:%v", expected, obj.data)
 	}
+
+    if obj.Size() != 10 {
+        t.Fatalf("Incorrect size reported, expected:%d, found:%d", 10, obj.Size())
+    }
 }
 
 func TestPushOver(t *testing.T) {
@@ -132,13 +136,13 @@ func simRR(capacity int) {
 	fmt.Printf("%d took %v\n", capacity, time.Since(start).Seconds())
 }
 
-func TestSizes(t *testing.T) {
-	fmt.Println("array")
+func TestPrimitiveAsymptoticPerformance(t *testing.T) {
+	fmt.Println("Standard array")
 	for idx := 7; idx < 14; idx++ {
 		sim(1 << idx)
 	}
 
-	fmt.Println("rr")
+	fmt.Println("RoundRobin (ring) queue")
 	for idx := 7; idx < 14; idx++ {
 		simRR(1 << idx)
 	}
