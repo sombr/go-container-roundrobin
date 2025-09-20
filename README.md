@@ -73,4 +73,4 @@ PASS
 ```
 
 Let's plot the relation of run times and queue lengths:
-![img](https://www.sergetoro.com/content/images/2023/06/image.svg)
+![img](https://sergetoro.com/images/RQbench.svg)
