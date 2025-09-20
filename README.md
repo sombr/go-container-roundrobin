@@ -9,7 +9,7 @@ So, what is a Ring Queue and why it's useful:
 1. It does not shift elements on element removal (no costly memcopy)
 1. It can start anywhere in the buffer and loop over the end
 
-![img](https://www.sergetoro.com/content/images/2023/06/RQ.svg)
+![img](https://sergetoro.com/images/RQ.svg)
 
 ## RingQueue Performance
 Do you like benchmarks? I love them, even though many cases they are non-exhaustive, relatively synthetic and might give a skewed view of reality :)
