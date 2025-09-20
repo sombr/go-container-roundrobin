@@ -101,7 +101,7 @@ func TestPushPop(t *testing.T) {
 }
 
 func sim(capacity int) {
-	ar := make([]int, capacity, capacity)
+	ar := make([]int, capacity)
 	size := 0
 
 	start := time.Now()
@@ -134,17 +134,13 @@ func simRR(capacity int) {
 
 func TestSizes(t *testing.T) {
 	fmt.Println("array")
-	cap := 1
-	for idx := 1; idx < 7; idx++ {
-		sim(cap)
-		cap = cap * 10
+	for idx := 7; idx < 14; idx++ {
+		sim(1 << idx)
 	}
 
 	fmt.Println("rr")
-	cap = 1
-	for idx := 1; idx < 7; idx++ {
-		simRR(cap)
-		cap = cap * 10
+	for idx := 7; idx < 14; idx++ {
+		simRR(1 << idx)
 	}
 }
 

@@ -1,6 +1,7 @@
 package roundrobin
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -32,7 +33,7 @@ func (r *RingQueue[T]) String() string {
 
 func (r *RingQueue[T]) Push(elem T) error {
 	if r.isFull {
-		return fmt.Errorf("out of bounds push, container is full")
+		return errors.New("out of bounds push, container is full")
 	}
 
 	r.data[r.end] = elem              // place the new element on the available space
@@ -45,7 +46,7 @@ func (r *RingQueue[T]) Push(elem T) error {
 func (r *RingQueue[T]) Pop() (T, error) {
 	var res T // "zero" element (respective of the type)
 	if !r.isFull && r.start == r.end {
-		return res, fmt.Errorf("empty queue")
+		return res, errors.New("empty queue")
 	}
 
 	res = r.data[r.start]                 // copy over the first element in the queue
@@ -58,7 +59,7 @@ func (r *RingQueue[T]) Pop() (T, error) {
 func (r *RingQueue[T]) Peek() (T, error) {
 	var res T // "zero" element (respective of the type)
 	if !r.isFull && r.start == r.end {
-		return res, fmt.Errorf("empty queue")
+		return res, errors.New("empty queue")
 	}
 
 	return r.data[r.start], nil
