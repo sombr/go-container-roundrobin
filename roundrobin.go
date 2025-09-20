@@ -66,12 +66,19 @@ func (r *RingQueue[T]) Peek() (T, error) {
 }
 
 func (r *RingQueue[T]) Size() int {
-	res := r.end - r.start
-	if res < 0 || (res == 0 && r.isFull) {
-		res = len(r.data) - res
+	size := len(r.data)
+	// illustration: https://sergetoro.com/images/rqueuesize.svg
+	if !r.isFull {
+		// normal order, [ start --- > end ]
+		size = r.end - r.start
+
+		// inverse order, [ --- > end <...> start --- > ]
+		if size < 0 {
+			size += len(r.data)
+		}
 	}
 
-	return res
+	return size
 }
 
 func (r *RingQueue[T]) IsFull() bool {

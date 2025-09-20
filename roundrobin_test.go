@@ -20,6 +20,12 @@ func eqSlices[T comparable](a []T, b []T) bool {
 	return true
 }
 
+func assertSize[T any](obj *RingQueue[T], expected int, t *testing.T) {
+	if obj.Size() != expected {
+		t.Fatalf("Incorrect size reported, expected:%d, found:%d", expected, obj.Size())
+	}
+}
+
 func TestToString(t *testing.T) {
 	obj := NewRingQueue[int](10)
 	expected := "[RRQ full:false size:10 start:0 end:0 data:[0 0 0 0 0 0 0 0 0 0]]"
@@ -45,9 +51,7 @@ func TestPushEnough(t *testing.T) {
 		t.Fatalf("Container data mismatch, expected:%v, found:%v", expected, obj.data)
 	}
 
-    if obj.Size() != 10 {
-        t.Fatalf("Incorrect size reported, expected:%d, found:%d", 10, obj.Size())
-    }
+	assertSize(obj, 10, t)
 }
 
 func TestPushOver(t *testing.T) {
@@ -58,6 +62,7 @@ func TestPushOver(t *testing.T) {
 			t.Fatalf("Unexpected error in adding an element with index %d", idx)
 		}
 	}
+	assertSize(obj, 10, t)
 
 	err := obj.Push(100)
 	if err == nil {
@@ -76,30 +81,31 @@ func TestPushPop(t *testing.T) {
 	for idx := 0; idx < 8; idx++ {
 		obj.Push(idx)
 	}
+	assertSize(obj, 8, t)
+
 	for idx := 0; idx < 5; idx++ {
 		e, err := obj.Pop()
 		if err != nil || e != idx {
 			t.Fatalf("inconsistent behavior")
 		}
 	}
-	for idx := 0; idx < 7; idx++ {
+	assertSize(obj, 3, t)
+
+	for idx := 0; idx < 6; idx++ {
 		obj.Push(100 + idx)
 	}
+	assertSize(obj, 9, t)
 
-	expected := []int{102, 103, 104, 105, 106, 5, 6, 7, 100, 101}
+	expected := []int{102, 103, 104, 105, 4, 5, 6, 7, 100, 101}
 
 	if !eqSlices(obj.data, expected) {
 		t.Fatalf("Container data mismatch, expected:%v, found:%v", expected, obj.data)
 	}
 
-	if obj.Size() != 10 {
-		t.Fatalf("inconsistent size: %d", obj.Size())
-	}
-
-	for idx := 0; idx < 10; idx++ {
+	for idx := 0; idx < 9; idx++ {
 		e, _ := obj.Pop()
 		if e != expected[(5+idx)%10] {
-			t.Fatalf("inconsistent behavior")
+			t.Fatalf("inconsistent data")
 		}
 	}
 }
